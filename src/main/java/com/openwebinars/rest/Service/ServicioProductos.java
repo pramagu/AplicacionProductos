@@ -132,11 +132,12 @@ public class ServicioProductos extends ServicioBase<Producto, Long, ProductoRepo
 
     public ResponseEntity<?> insertarProducto(CreateProductoDTO nuevo) {
 
-        Producto nuevoProducto = new Producto();
-        Categoria categoria = categoriaRepositorio.findById(nuevo.getCategoriaId()).orElse(null);
-        nuevoProducto = conversorProducto.convertToProducto(nuevo);
-        nuevoProducto.setId(null);
-        nuevoProducto.setCategoria(categoria);
+       Producto nuevoProducto = Producto.builder()
+                .nombre(nuevo.getNombre())
+                .precio(nuevo.getPrecio())
+                .categoria(categoriaRepositorio.findById(nuevo.getCategoriaId())
+                        .orElseThrow(() -> new ProductoNotFoundException()))
+                .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(this.save(nuevoProducto));
     }
 
